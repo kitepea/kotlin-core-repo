@@ -1,28 +1,21 @@
-interface DataCallback {
-    fun onSuccess(data: String)
-    fun onError(error: Throwable)
-}
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
-fun fetchData(callback: DataCallback) {
-    // Giả lập một tác vụ bất đồng bộ
-    Thread {
-        try {
-            Thread.sleep(1000) // Giả lập độ trễ mạng
-            callback.onSuccess("Dữ liệu tải về thành công!")
-        } catch (e: Exception) {
-            callback.onError(e)
-        }
-    }.start()
-}
+fun main() = runBlocking {
+    val counter = MutableSharedFlow<Int>(replay = 0, extraBufferCapacity = 10)
 
-fun main() {
-    fetchData(object : DataCallback {
-        override fun onSuccess(data: String) {
-            println("Nhận dữ liệu: $data")
+    launch {
+        counter.collect { value ->
+            println("Counter cập nhật: $value")
         }
+    }
 
-        override fun onError(error: Throwable) {
-            println("Lỗi: ${error.message}")
-        }
-    })
+    counter.emit(1) // Không bị ghi đè
+    counter.emit(2) // Không bị ghi đè
+    counter.emit(3) // Không bị ghi đè
+    counter.emit(4) // Không bị ghi đè
+
+    delay(100)
 }

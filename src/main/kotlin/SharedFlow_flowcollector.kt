@@ -15,6 +15,7 @@ fun main() = runBlocking {
     launch {
         sharedFlow.collect {
             println("Received: $it")
+            delay(10000)
         }
     }
     flow {

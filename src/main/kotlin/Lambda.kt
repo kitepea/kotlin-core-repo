@@ -9,7 +9,7 @@ fun orderFood(foodName: String, callBack: (String) -> Unit) {
 }
 
 fun main() {
-    orderFood("Pizza") { response ->
-        println("Result: $response")
+    orderFood("Pizza") {
+        println("Result: $it")
     }
 }

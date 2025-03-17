@@ -1,21 +1,30 @@
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-fun main() = runBlocking {
-    val counter = MutableSharedFlow<Int>(replay = 0, extraBufferCapacity = 10)
+fun main(): Unit = runBlocking {
+    val mutableStateFlow = MutableStateFlow(0)
+    val stateFlow: StateFlow<Int> = mutableStateFlow
 
+// Collect values from stateFlow
     launch {
-        counter.collect { value ->
-            println("Counter cập nhật: $value")
+        stateFlow.collect { value ->
+            println("Collector 1 received: $value")
         }
     }
 
-    counter.emit(1) // Không bị ghi đè
-    counter.emit(2) // Không bị ghi đè
-    counter.emit(3) // Không bị ghi đè
-    counter.emit(4) // Không bị ghi đè
+// Collect values from stateFlow
+    launch {
+        stateFlow.collect { value ->
+            println("Collector 2 received: $value")
+        }
+    }
 
-    delay(100)
+// Update the state
+    launch {
+        repeat(3) { i ->
+            mutableStateFlow.value = i
+        }
+    }
 }

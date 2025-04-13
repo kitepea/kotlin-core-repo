@@ -1,30 +1,17 @@
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 
-fun main(): Unit = runBlocking {
-    val mutableStateFlow = MutableStateFlow(0)
-    val stateFlow: StateFlow<Int> = mutableStateFlow
-
-// Collect values from stateFlow
-    launch {
-        stateFlow.collect { value ->
-            println("Collector 1 received: $value")
-        }
+fun main() = runBlocking {
+    val myFlow = flow {
+        println("Flow bắt đầu chạy")
+        emit(1)
+        emit(2)
+        emit(3)
     }
 
-// Collect values from stateFlow
-    launch {
-        stateFlow.collect { value ->
-            println("Collector 2 received: $value")
-        }
-    }
+    delay(1000) // Chờ một chút nhưng Flow vẫn chưa chạy
+    println("Chưa gọi collect nên Flow chưa chạy")
 
-// Update the state
-    launch {
-        repeat(3) { i ->
-            mutableStateFlow.value = i
-        }
-    }
+    myFlow.collect { println("Nhận: $it") }
 }
